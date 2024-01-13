@@ -1,6 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Calculator from "./Calculator";
 import ToggleSounds from "./ToggleSounds";
+
+
+// Initially this function was inside APP, but we do not need it to be recreated on every render, so we put it outside App.
+function formatTime(date) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    year: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(date);
+}
 
 function App() {
   const [allowSound, setAllowSound] = useState(true);
@@ -9,7 +21,8 @@ function App() {
   // Will be be AM or PM
   const partOfDay = time.slice(-2);
 
-  const workouts = [
+  const workouts = useMemo(() => {
+    return [
     {
       name: "Full-body workout",
       numExercises: partOfDay === "AM" ? 9 : 8,
@@ -31,16 +44,9 @@ function App() {
       numExercises: partOfDay === "AM" ? 5 : 4,
     },
   ];
+ }, [partOfDay])
 
-  function formatTime(date) {
-    return new Intl.DateTimeFormat("en", {
-      month: "short",
-      year: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    }).format(date);
-  }
+
 
   useEffect(function () {
     const id = setInterval(function () {
